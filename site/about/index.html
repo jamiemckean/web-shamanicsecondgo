@@ -1182,41 +1182,49 @@ fbq('track', 'PageView');
 				
 				<div class="et_pb_code_inner"><script>
 	(function () {
-		// Exit-intent popup: show ebook popup when mouse leaves viewport from the top
+		// Exit-intent popup
 		var STORAGE_KEY = 'st-ebook-popup-shown';
+		var wrapper = document.querySelector('.area-outer-wrap[data-da-area="ebook"]');
+		var overlay = document.querySelector('.da-overlay.evr_fb_popup_modal');
+
+		function hide() {
+			if (wrapper) wrapper.style.display = 'none';
+			if (overlay) overlay.style.display = 'none';
+			document.body.classList.remove('da-popup-visible', 'da-overlay-visible');
+		}
+
+		function show() {
+			if (wrapper) wrapper.style.display = 'block';
+			if (overlay) overlay.style.display = 'block';
+			document.body.classList.add('da-popup-visible', 'da-overlay-visible');
+		}
+
+		// Hide immediately on page load (scraped HTML has popup in visible position)
+		hide();
+
 		if (sessionStorage.getItem(STORAGE_KEY)) return;
 
-		var shown = false;
-		function showPopup() {
-			if (shown) return;
-			shown = true;
+		var triggered = false;
+		function trigger() {
+			if (triggered) return;
+			triggered = true;
 			sessionStorage.setItem(STORAGE_KEY, '1');
-			if (window.DiviArea && typeof DiviArea.show === 'function') {
-				DiviArea.show('ebook');
-			}
+			show();
 		}
 
 		// Desktop: detect mouse leaving from the top of the viewport
 		document.addEventListener('mouseleave', function (e) {
-			if (e.clientY <= 0) showPopup();
+			if (e.clientY <= 0) trigger();
 		});
 
 		// Mobile fallback: show after 45 seconds of browsing
-		setTimeout(showPopup, 45000);
+		setTimeout(trigger, 45000);
 
-		// Close button handler
+		// Close on X button or overlay click
 		document.addEventListener('click', function (e) {
-			var btn = e.target.closest('.da-close, .evr-close');
-			if (!btn) return;
-			e.preventDefault();
-			if (window.DiviArea && typeof DiviArea.close === 'function') {
-				DiviArea.close('ebook');
-			} else {
-				var popup = document.getElementById('ebook');
-				var overlay = document.querySelector('.da-overlay');
-				if (popup) popup.classList.remove('is-open');
-				if (overlay) overlay.style.display = 'none';
-				document.body.classList.remove('da-popup-visible', 'da-overlay-visible');
+			if (e.target.closest('.da-close, .evr-close') || e.target === overlay) {
+				e.preventDefault();
+				hide();
 			}
 		});
 	})();

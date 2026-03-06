@@ -1,12 +1,5 @@
 <!DOCTYPE html><html lang="en-US" class="js"><head>
-<style id="popup-suppress">
-/* Static site: hide all Divi popups */
-.et_pb_section.popup,
-.area-outer-wrap[data-da-type="popup"],
-.da-overlay,
-.pum-overlay,
-.da-popup-container { display: none !important; visibility: hidden !important; }
-</style><meta http-equiv="origin-trial" content="A7vZI3v+Gz7JfuRolKNM4Aff6zaGuT7X0mf3wtoZTnKv6497cVMnhy03KDqX7kBz/q/iidW7srW31oQbBt4VhgoAAACUeyJvcmlnaW4iOiJodHRwczovL3d3dy5nb29nbGUuY29tOjQ0MyIsImZlYXR1cmUiOiJEaXNhYmxlVGhpcmRQYXJ0eVN0b3JhZ2VQYXJ0aXRpb25pbmczIiwiZXhwaXJ5IjoxNzU3OTgwODAwLCJpc1N1YmRvbWFpbiI6dHJ1ZSwiaXNUaGlyZFBhcnR5Ijp0cnVlfQ==">
+<meta http-equiv="origin-trial" content="A7vZI3v+Gz7JfuRolKNM4Aff6zaGuT7X0mf3wtoZTnKv6497cVMnhy03KDqX7kBz/q/iidW7srW31oQbBt4VhgoAAACUeyJvcmlnaW4iOiJodHRwczovL3d3dy5nb29nbGUuY29tOjQ0MyIsImZlYXR1cmUiOiJEaXNhYmxlVGhpcmRQYXJ0eVN0b3JhZ2VQYXJ0aXRpb25pbmczIiwiZXhwaXJ5IjoxNzU3OTgwODAwLCJpc1N1YmRvbWFpbiI6dHJ1ZSwiaXNUaGlyZFBhcnR5Ijp0cnVlfQ==">
 	<meta charset="UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<link rel="pingback" href="https://shamanictrekker.com/xmlrpc.php">
@@ -1189,7 +1182,27 @@ fbq('track', 'PageView');
 				
 				<div class="et_pb_code_inner"><script>
 	(function () {
-		/* popup auto-open disabled on static site */
+		// Exit-intent popup: show ebook popup when mouse leaves viewport from the top
+		var STORAGE_KEY = 'st-ebook-popup-shown';
+		if (sessionStorage.getItem(STORAGE_KEY)) return;
+
+		var shown = false;
+		function showPopup() {
+			if (shown) return;
+			shown = true;
+			sessionStorage.setItem(STORAGE_KEY, '1');
+			if (window.DiviArea && typeof DiviArea.show === 'function') {
+				DiviArea.show('ebook');
+			}
+		}
+
+		// Desktop: detect mouse leaving from the top of the viewport
+		document.addEventListener('mouseleave', function (e) {
+			if (e.clientY <= 0) showPopup();
+		});
+
+		// Mobile fallback: show after 45 seconds of browsing
+		setTimeout(showPopup, 45000);
 	})();
 </script></div>
 			</div>
@@ -1201,7 +1214,7 @@ fbq('track', 'PageView');
 			</div>
 				
 				
-			</div><span class="da-close-wrap evr-close_wrap" style="width: 638px; height: 880px;"><a href="#close" class="da-close evr-close">×</a></span></div><div class="da-overlay evr_fb_popup_modal" style="display:none!important;"></div></div></div></div>
+			</div><span class="da-close-wrap evr-close_wrap" style="width: 638px; height: 880px;"><a href="#close" class="da-close evr-close">×</a></span></div><div class="da-overlay evr_fb_popup_modal"></div></div></div></div>
 
 			<script type="speculationrules">
 {"prefetch":[{"source":"document","where":{"and":[{"href_matches":"/*"},{"not":{"href_matches":["/wp-*.php","/wp-admin/*","/wp-content/uploads/*","/wp-content/*","/wp-content/plugins/*","/wp-content/themes/Divi/*","/*\\?(.+)"]}},{"not":{"selector_matches":"a[rel~=\"nofollow\"]"}},{"not":{"selector_matches":".no-prefetch, .no-prefetch a"}}]},"eagerness":"conservative"}]}

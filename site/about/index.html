@@ -1203,6 +1203,22 @@ fbq('track', 'PageView');
 
 		// Mobile fallback: show after 45 seconds of browsing
 		setTimeout(showPopup, 45000);
+
+		// Close button handler
+		document.addEventListener('click', function (e) {
+			var btn = e.target.closest('.da-close, .evr-close');
+			if (!btn) return;
+			e.preventDefault();
+			if (window.DiviArea && typeof DiviArea.close === 'function') {
+				DiviArea.close('ebook');
+			} else {
+				var popup = document.getElementById('ebook');
+				var overlay = document.querySelector('.da-overlay');
+				if (popup) popup.classList.remove('is-open');
+				if (overlay) overlay.style.display = 'none';
+				document.body.classList.remove('da-popup-visible', 'da-overlay-visible');
+			}
+		});
 	})();
 </script></div>
 			</div>

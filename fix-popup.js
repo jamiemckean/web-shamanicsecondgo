@@ -72,13 +72,23 @@ for (const rel of PAGES) {
   html = html.replace(/<style id="popup-suppress">[\s\S]*?<\/style>/g, '');
   if (html !== before1) { console.log(`  [removed popup-suppress] ${rel}`); changed = true; }
 
-  // 2. Restore overlay div (remove inline display:none)
+  // 2. Add display:none to wrapper and overlay inline styles (hides before JS runs)
   const before2 = html;
-  html = html.replace(
-    /<div class="da-overlay evr_fb_popup_modal" style="display:none!important;">/g,
-    '<div class="da-overlay evr_fb_popup_modal">'
-  );
-  if (html !== before2) { console.log(`  [restored overlay] ${rel}`); changed = true; }
+  html = html
+    .replace(
+      /(<div[^>]+area-outer-wrap[^>]+data-da-area="ebook"[^>]+style=")(?!display:none)/g,
+      '$1display:none;'
+    )
+    .replace(
+      /<div class="da-overlay evr_fb_popup_modal"(?! style="display:none)>/g,
+      '<div class="da-overlay evr_fb_popup_modal" style="display:none;">'
+    )
+    // Remove old !important display:none that was previously set (now replaced by plain display:none)
+    .replace(
+      /<div class="da-overlay evr_fb_popup_modal" style="display:none!important;">/g,
+      '<div class="da-overlay evr_fb_popup_modal" style="display:none;">'
+    );
+  if (html !== before2) { console.log(`  [hidden popup elements] ${rel}`); changed = true; }
 
   // 3. Replace disabled popup comment with exit-intent JS
   const before3 = html;

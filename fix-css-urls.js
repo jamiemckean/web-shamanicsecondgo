@@ -128,25 +128,46 @@ async function downloadMissingImages() {
 
 // ─── 3. Suppress popup on all HTML pages ─────────────────────────────────────
 
-const POPUP_SUPPRESS = `
-<script>
-/* Suppress eBook popup on static site */
-(function() {
-  // Set a cookie so the popup thinks it's been shown already
-  document.cookie = 'pum-2105=true; path=/; max-age=31536000';
-  document.cookie = 'pum-1=true; path=/; max-age=31536000';
-  // Override DiviArea to block all popups from opening
-  window.addEventListener('DOMContentLoaded', function() {
-    if (window.DiviArea) {
-      window.DiviArea.addFilter('show_popup', function() { return false; });
-    }
-    // Also hide any popup sections directly
-    document.querySelectorAll('.et_pb_section.popup, .da-popup-container, .pum-overlay').forEach(function(el) {
-      el.style.display = 'none';
-    });
-  });
-})();
-</script>`;
+// CSS injected into <head> to nuke popups before any JS runs
+const POPUP_CSS = `<style id="popup-suppress">
+/* Static site: hide all Divi popups */
+.et_pb_section.popup,
+.area-outer-wrap[data-da-type="popup"],
+.da-overlay,
+.pum-overlay,
+.da-popup-container { display: none !important; visibility: hidden !important; }
+</style>`;
+
+function suppressPopupInHtml(html) {
+  // 1. Inject CSS at start of <head>
+  html = html.replace('<head>', '<head>\n' + POPUP_CSS);
+
+  // 2. Remove 'da-popup-visible' and 'da-overlay-visible' from <body> class
+  html = html.replace(/(<body[^>]*class="[^"]*)\bda-popup-visible\b/g, '$1');
+  html = html.replace(/(<body[^>]*class="[^"]*)\bda-overlay-visible\b/g, '$1');
+
+  // 3. Remove 'is-open' class from popup sections
+  html = html.replace(/(class="[^"]*\bpopup\b[^"]*)\bis-open\b/g, '$1');
+
+  // 4. Neutralise the DiviArea.show() call that re-opens the popup
+  //    Pattern: DiviArea.addAction('ready', function () { ... DiviArea.show(popupId); ... });
+  html = html.replace(
+    /DiviArea\.addAction\('ready'[\s\S]*?DiviArea\.show\(popupId\)[\s\S]*?\}\s*\);/g,
+    '/* popup auto-open disabled on static site */'
+  );
+
+  // 5. Hide the overlay div inline styles (belt-and-suspenders)
+  html = html.replace(
+    /(<div[^>]*class="da-overlay[^"]*"[^>]*)(style="[^"]*")/g,
+    '$1style="display:none!important;"'
+  );
+  html = html.replace(
+    /(<div[^>]*class="da-overlay[^"]*")(?!\s+style=)/g,
+    '$1 style="display:none!important;"'
+  );
+
+  return html;
+}
 
 console.log('\nSuppressing popup on all HTML pages...');
 function walkHtml(dir) {
@@ -156,11 +177,17 @@ function walkHtml(dir) {
     if (stat.isDirectory() && entry !== 'assets') walkHtml(full);
     else if (entry.endsWith('.html')) {
       let html = fs.readFileSync(full, 'utf8');
-      if (!html.includes('Suppress eBook popup')) {
-        html = html.replace('</head>', POPUP_SUPPRESS + '\n</head>');
-        fs.writeFileSync(full, html);
-        console.log(`  Patched: ${full.replace(SITE + '/', '')}`);
+      // Re-apply every time (idempotent since we check for duplicates via CSS id)
+      if (html.includes('popup-suppress')) {
+        // Already has new suppressor; re-apply structural fixes only
+        html = suppressPopupInHtml(html.replace(/<head>\n<style id="popup-suppress">[\s\S]*?<\/style>/, '<head>'));
+      } else {
+        // Remove old JS suppressor if present
+        html = html.replace(/<script>\n\/\* Suppress eBook popup[\s\S]*?<\/script>/g, '');
+        html = suppressPopupInHtml(html);
       }
+      fs.writeFileSync(full, html);
+      console.log(`  Patched: ${full.replace(SITE + '/', '')}`);
     }
   }
 }

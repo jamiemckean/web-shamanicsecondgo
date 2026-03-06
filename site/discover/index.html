@@ -1,4 +1,12 @@
 <!DOCTYPE html><html lang="en-US" class="js"><head>
+<style id="popup-suppress">
+/* Static site: hide all Divi popups */
+.et_pb_section.popup,
+.area-outer-wrap[data-da-type="popup"],
+.da-overlay,
+.pum-overlay,
+.da-popup-container { display: none !important; visibility: hidden !important; }
+</style>
 	<meta charset="UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<link rel="pingback" href="https://shamanictrekker.com/xmlrpc.php">
@@ -157,24 +165,7 @@ fbq('track', 'PageView');
 </style>
 
 
-<script>
-/* Suppress eBook popup on static site */
-(function() {
-  // Set a cookie so the popup thinks it's been shown already
-  document.cookie = 'pum-2105=true; path=/; max-age=31536000';
-  document.cookie = 'pum-1=true; path=/; max-age=31536000';
-  // Override DiviArea to block all popups from opening
-  window.addEventListener('DOMContentLoaded', function() {
-    if (window.DiviArea) {
-      window.DiviArea.addFilter('show_popup', function() { return false; });
-    }
-    // Also hide any popup sections directly
-    document.querySelectorAll('.et_pb_section.popup, .da-popup-container, .pum-overlay').forEach(function(el) {
-      el.style.display = 'none';
-    });
-  });
-})();
-</script>
+
 </head>
 <body class="wp-singular page-template-default page page-id-133 wp-theme-Divi et-tb-has-template et-tb-has-header et-tb-has-footer et_pb_button_helper_class et_cover_background et_pb_gutter et_pb_gutters3 et_pb_pagebuilder_layout et_no_sidebar et_divi_theme et-db">
 	<div id="page-container">

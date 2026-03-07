@@ -226,3 +226,21 @@ textarea {
   line-height: 1.6 !important;
   letter-spacing: 0.01em !important;
 }
+
+/* ─── Header: remove whitespace above the red menu strip ───────── */
+
+.et-l--header .et_pb_section,
+.et-l--header .et_pb_fullwidth_section {
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+}
+
+.et_pb_fullwidth_menu--without-logo .et_pb_menu__menu > nav > ul {
+  padding-top: 0 !important;
+}
+
+/* ─── Footer: hide overflowing dropdown sub-menus ──────────────── */
+
+.et-l--footer .et_pb_section {
+  overflow: hidden !important;
+}

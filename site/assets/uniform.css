@@ -239,8 +239,36 @@ textarea {
   padding-top: 0 !important;
 }
 
-/* ─── Footer: hide overflowing dropdown sub-menus ──────────────── */
+/* ─── Footer layout cleanup ────────────────────────────────────── */
 
 .et-l--footer .et_pb_section {
   overflow: hidden !important;
+}
+
+/* Copyright bar: full-width row with vertically centered columns */
+.et_pb_row_1_tb_footer,
+body #page-container .et-l .et_pb_row_1_tb_footer.et_pb_row {
+  width: 100% !important;
+  max-width: 100% !important;
+  padding-left: 30px !important;
+  padding-right: 30px !important;
+  display: flex !important;
+  align-items: center !important;
+}
+
+/* Right-align the policy links column */
+.et_pb_column_2_tb_footer .et_pb_text_inner {
+  text-align: right !important;
+}
+
+/* Logo section: add breathing room */
+.et_pb_section_0_tb_footer.et_pb_section {
+  padding-top: 30px !important;
+  padding-bottom: 20px !important;
+}
+
+/* Copyright bar section: proper vertical padding */
+.et_pb_section_1_tb_footer.et_pb_section {
+  padding-top: 15px !important;
+  padding-bottom: 15px !important;
 }

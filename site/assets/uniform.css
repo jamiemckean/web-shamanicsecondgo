@@ -138,24 +138,14 @@ select,
   font-family: 'Open Sans', Helvetica, Arial, sans-serif !important;
 }
 
-/* ─── Spacing: paragraphs and sections ──────────────────────────── */
+/* ─── Spacing: paragraph text only (preserve Divi section layout) ── */
 
 .et_pb_text_inner p {
-  margin-bottom: 1.2em !important;
+  margin-bottom: 1.1em !important;
 }
 
 .et_pb_text_inner p:last-child {
   margin-bottom: 0 !important;
-}
-
-.et_pb_section {
-  padding-top: 4% !important;
-  padding-bottom: 4% !important;
-}
-
-.et_pb_row {
-  padding-top: 2% !important;
-  padding-bottom: 2% !important;
 }
 
 /* ─── Testimonials — use italic Open Sans instead of handwriting ── */
